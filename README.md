@@ -1,57 +1,80 @@
 # Claude Automations
 
-Skills e rotinas para Claude Code + Obsidian vault.
+Skills and routines for Claude Code + Obsidian vault.
 
-## Estrutura
+> **Language:** All prompts are in English for portability. User input and output can be in **PT-BR**.
+
+## Structure
 
 ```
-commands/       Slash commands (disponíveis via /comando no Claude Code)
-rotinas/        Scheduled routines (prompts editáveis no Obsidian)
+commands/       Slash commands (available via /command in Claude Code)
+routines/       Scheduled routines (editable prompts living in Obsidian)
 ```
 
 ## Commands
 
-| Comando | Descrição |
-|---------|-----------|
-| `/relatorio-artigos` | Relatório analítico de artigos ingestados (por período) |
-| `/process-queue` | Processa tarefas one-shot em Queue/ |
-| `/commit-padrao` | Commit com mensagem padronizada |
-| `/criar-crud` | CRUD completo em Java |
-| `/explicar` | Explica código ou conceito |
-| `/resumo-sessao` | Resumo estruturado da sessão |
-| `/revisar-codigo` | Code review do arquivo atual |
+| Command | Description |
+|---------|-------------|
+| `/article-report` | Analytical report of ingested articles (by period) |
+| `/process-queue` | Process one-shot tasks from Queue/ |
+| `/commit-standard` | Conventional Commits message generator |
+| `/create-crud` | Complete Java CRUD (DAO pattern) |
+| `/explain` | Explain code or concept for learners |
+| `/session-summary` | Structured session summary |
+| `/code-review` | Code review of current file |
 
-## Rotinas
+## Routines
 
-| Rotina | Schedule | Descrição |
-|--------|----------|-----------|
-| `ingest-diario` | Sexta 17h | Ingest semanal .raw/articles + clippings |
-| `relatorio-pos-ingest` | Sexta 19h | Análise cruzada pós-ingest |
-| `meta-coaching-semanal` | Sábado 1h | Self-audit de uso do Claude Code |
-| `wiki-lint-semanal` | Domingo 4h | Health check: orphans, dead links, dedup |
-| `connection-finder` | Domingo 6h | Conexões não-óbvias entre sources |
-| `daily-brief` | Seg-Sex 23h | Contexto noturno: mudanças, conexões, pergunta |
-| `process-queue` | 8h/12h/16h/20h | Processa tarefas one-shot em Queue/ |
+| Routine | Schedule | Description |
+|---------|----------|-------------|
+| `weekly-ingest` | Friday 5 PM | Weekly ingest of articles + clippings (token-economic) |
+| `post-ingest-report` | Friday 7 PM | Cross-analysis report after ingest |
+| `weekly-meta-coaching` | Saturday 1 AM | Self-audit of Claude Code usage |
+| `weekly-wiki-lint` | Sunday 4 AM | Health check: orphans, dead links, dedup |
+| `connection-finder` | Sunday 6 AM | Non-obvious connections between sources |
+| `daily-brief` | Mon-Fri 11 PM | Nightly context: changes, connections, question |
+| `process-queue` | 8AM/12PM/4PM/8PM | Process one-shot tasks from Queue/ |
 
-## Como usar
+## How to use
 
 ### Commands
-Copiar para `.claude/commands/` do projeto:
+Copy to your project's `.claude/commands/`:
 ```bash
 cp commands/*.md /path/to/project/.claude/commands/
 ```
 
-### Rotinas
-Copiar para `Queue/rotinas/` do vault Obsidian:
+### Routines
+Copy to your Obsidian vault's `Queue/routines/`:
 ```bash
-cp rotinas/*.md ~/Obsidian/vault-michel/Queue/rotinas/
+cp routines/*.md $VAULT_DIR/Queue/routines/
 ```
 
-Cada rotina é referenciada por um scheduled task (thin wrapper) em `~/.claude/scheduled-tasks/`.
+Each routine is referenced by a scheduled task (thin wrapper) in `~/.claude/scheduled-tasks/`. The wrapper just reads the routine file and executes — edit the routine in Obsidian, next run picks up changes automatically.
 
-## Princípios
+## Architecture
 
-- Prompts vivem no Obsidian, não em settings — editáveis como qualquer nota
-- Wikilinks integram rotinas com vault (sources, concepts, entities)
-- Melhoria contínua: editar prompt no Obsidian = próximo run já pega
+```
+$VAULT_DIR/
+├── ingest/              Raw sources (articles + clippings)
+│   ├── articles/
+│   └── clippings/
+├── Queue/               Async human→agent interface
+│   ├── _template.md     Task template
+│   ├── .archive/        Completed tasks
+│   └── routines/        Recurring routine prompts (source of truth)
+├── Generated/           Autonomous outputs (organized by routine)
+│   ├── relatorios/
+│   ├── connections/
+│   ├── daily-briefs/
+│   ├── wiki-lint/
+│   ├── meta-coaching/
+│   └── ingest-reports/
+└── wiki/                Knowledge base
+```
+
+## Principles
+
+- Prompts live in Obsidian, not in settings — editable like any note
+- Wikilinks integrate routines with vault (sources, concepts, entities)
+- Continuous improvement: edit prompt in Obsidian = next run picks up changes
 - Token economy: bash > AI, batch > loop, append > rewrite

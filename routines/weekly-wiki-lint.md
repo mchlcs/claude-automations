@@ -1,26 +1,23 @@
 ---
-title: Wiki Health Check Semanal
-type: rotina
-schedule: "domingo 4h AM"
+title: Weekly Wiki Health Check
+type: routine
+schedule: "Sunday 4 AM"
 last_improved: 2026-05-09
 version: 2
-tags: [rotina, lint, wiki, health-check]
+tags: [routine, lint, wiki, health-check]
 ---
 
-# Wiki Health Check Semanal
+> **Note:** User input and output can be in PT-BR. Prompts are English for portability.
 
-Caveman full. Autônomo.
+# Weekly Wiki Health Check
 
-**Referências vault:**
-- [[wiki/wiki-index]] — home do vault
-- [[wiki/concepts/karpathy-four-principles]] — surgical changes, verify before done
-- [[wiki/concepts/knowledge-compounding]] — lint preserva integridade do compound
+Terse mode. Autonomous.
 
 ---
 
 ## 1. Lint wiki vault
 
-Use `claude-obsidian:wiki-lint` skill. Scan:
+Scan:
 - Orphan pages (no inbound links)
 - Dead wikilinks (target missing)
 - Stale claims (entities/concepts not updated >30d, referenced as "current")
@@ -34,7 +31,7 @@ Report counts + top 10 examples each category.
 
 ## 2. Manifest dedup sweep
 
-Read `.raw/.manifest.json`. Detect:
+Read `ingest/.manifest.json`. Detect:
 - Same hash across multiple entries → flag as dup
 - Same source different filename → flag as dup
 - Entries marked "stub-missing-raw-file" → flag as orphan
@@ -75,7 +72,7 @@ Scan `Queue/.archive/`. If >20 entries >30d old:
 
 ## 6. Report
 
-Output: `Generated/wiki-lint-YYYY-MM-DD.md`
+Output: `Generated/wiki-lint/wiki-lint-YYYY-MM-DD.md`
 
 ```
 - Lint: orphans=N, dead=N, stale=N, frontmatter-gaps=N, dup-concepts=N
@@ -86,11 +83,11 @@ Output: `Generated/wiki-lint-YYYY-MM-DD.md`
 - Action items: N (priority high)
 ```
 
-Sem fixes automáticos. Só relatório + sugestões.
+No automatic fixes. Report + suggestions only.
 
 ---
 
 ## Changelog
 
-- v2 (2026-05-09): migrado pra Queue/rotinas/. Adicionado Queue cleanup step. Wikilinks. Output pra Generated/.
-- v1: original em scheduled-tasks SKILL.md
+- v2 (2026-05-09): migrated to Queue/routines/. Added Queue cleanup step. Output to Generated/.
+- v1: original in scheduled-tasks SKILL.md

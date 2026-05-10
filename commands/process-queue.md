@@ -1,45 +1,47 @@
-Processe todas as tarefas pendentes em Queue/.
+Process all pending tasks in Queue/.
 
-## Execução
+> **Note:** User input and output can be in PT-BR. Prompts are English for portability.
+
+## Execution
 
 ### 1. Scan Queue/
 
 ```bash
-find ~/Obsidian/vault-michel/Queue -maxdepth 1 -name "*.md" -not -name "_template.md" | sort
+find $VAULT_DIR/Queue -maxdepth 1 -name "*.md" -not -name "_template.md" | sort
 ```
 
-Se 0 tarefas → reportar "Queue vazia" e parar.
+If 0 tasks → report "Queue empty" and stop.
 
-### 2. Priorizar
+### 2. Prioritize
 
-Ler frontmatter de cada task. Ordenar por priority (alta → média → baixa).
+Read frontmatter of each task. Sort by priority (high → medium → low).
 
-### 3. Processar cada task
+### 3. Process each task
 
-Para cada task (sequencial por priority, paralelo dentro de mesma priority se independentes):
+For each task (sequential by priority, parallel within same priority if independent):
 
-1. Ler instruções completas do arquivo
-2. Resolver [[wikilinks]] referenciados (ler sources/concepts se necessário)
-3. Executar tarefa conforme descrito
-4. Salvar output em local especificado (default: Generated/)
-5. Atualizar frontmatter: `status: concluído`, `completed: YYYY-MM-DD`
-6. Mover task pra Queue/.archive/
+1. Read complete instructions from file
+2. Resolve referenced [[wikilinks]] (read sources/concepts if needed)
+3. Execute task as described
+4. Save output to specified location (default: Generated/)
+5. Update frontmatter: `status: completed`, `completed: YYYY-MM-DD`
+6. Move task to Queue/.archive/
 
 ### 4. Report
 
 ```
-✓ Queue: N tarefas processadas
-✓ Alta: N | Média: N | Baixa: N
-✓ Outputs: [lista de arquivos gerados]
-✓ Erros: N (detalhes inline)
+✓ Queue: N tasks processed
+✓ High: N | Medium: N | Low: N
+✓ Outputs: [list of generated files]
+✓ Errors: N (details inline)
 ```
 
-Append resumo em wiki/hot.md.
+Append summary to wiki/hot.md.
 
 ## Constraints
 
-- Ler e respeitar constraints de cada task
-- Não processar arquivos em Queue/rotinas/ (são templates de rotinas, não tasks one-shot)
-- Se task referencia source que não existe → skip com warning
-- Max 10 tasks por execução (backpressure)
-- Caveman mode no output
+- Read and respect each task's constraints
+- Do NOT process files in Queue/routines/ (those are recurring routine templates, not one-shot tasks)
+- If task references a non-existent source → skip with warning
+- Max 10 tasks per execution (backpressure)
+- Terse mode in output

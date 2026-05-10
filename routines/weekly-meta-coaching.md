@@ -1,20 +1,17 @@
 ---
-title: Meta-Coaching Claude Code — Self-Audit Semanal
-type: rotina
-schedule: "sábado 1h AM"
+title: Meta-Coaching Claude Code — Weekly Self-Audit
+type: routine
+schedule: "Saturday 1 AM"
 last_improved: 2026-05-09
 version: 2
-tags: [rotina, meta, coaching, token-economy]
+tags: [routine, meta, coaching, token-economy]
 ---
+
+> **Note:** User input and output can be in PT-BR. Prompts are English for portability.
 
 # Meta-Coaching Claude Code
 
-Auditar uso de Claude Code da semana. Surfar mudanças de comportamento de alto impacto.
-
-**Referências vault:**
-- [[wiki/concepts/karpathy-four-principles]] — think before acting
-- [[wiki/sources/how-to-cut-claude-code-costs-by-3x-using-karpathy-s-context-engineering]] — context engineering = cost engineering
-- [[wiki/sources/best-practices-for-using-claude-opus-4-7-with-claude-code]] — front-load context, less turns
+Audit Claude Code usage from the past week. Surface high-leverage behavior changes.
 
 ---
 
@@ -42,7 +39,7 @@ Ranked by (frequency × estimated waste). For each:
 
 ### 3. Surface surprises
 
-Patterns I likely don't notice. Do NOT fabricate to hit quota.
+Patterns I likely don't notice. Do NOT fabricate to hit a quota.
 
 ### 4. Top 2 fixes
 
@@ -64,15 +61,15 @@ For top 2 patterns only, propose ONE concrete fix each:
 
 ## Output
 
-Save to `Generated/meta-coaching-YYYY-MM-DD.md`
+Save to `Generated/meta-coaching/meta-coaching-YYYY-MM-DD.md`
 
 Markdown. Tables for clusters. Bulleted patterns. Numbered fixes.
 
-Also check if any pattern matches existing [[wiki/concepts/]] or lessons in `tasks/lessons.md` — cross-reference if so.
+Also check if any pattern matches existing vault concepts or lessons — cross-reference if so.
 
 ---
 
 ## Changelog
 
-- v2 (2026-05-09): migrado pra Queue/rotinas/. Adicionado wikilinks, output pra Generated/, cross-ref com vault.
-- v1: original em scheduled-tasks SKILL.md
+- v2 (2026-05-09): migrated to Queue/routines/. Added output to Generated/, cross-ref with vault.
+- v1: original in scheduled-tasks SKILL.md
