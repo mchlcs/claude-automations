@@ -1,80 +1,157 @@
-# Claude Automations
+# claude-automations
 
-Skills and routines for Claude Code + Obsidian vault.
+> Slash commands and scheduled routines for Claude Code + Obsidian.  
+> Prompts live in Obsidian — edit a note, next run picks up changes automatically.
 
-> **Language:** All prompts are in English for portability. User input and output can be in **PT-BR**.
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+[![Claude Code](https://img.shields.io/badge/Claude%20Code-compatible-8A2BE2)](https://claude.ai/code)
+[![Language: EN](https://img.shields.io/badge/prompts-EN-green)](README.md)
 
-## Structure
+> **Note:** All prompts are in English for portability. User input/output can be in PT-BR.
+
+---
+
+## What this is
+
+7 slash commands for Claude Code. 7 scheduled routines that run autonomously on a cron schedule.  
+The key pattern: **thin harness + live prompts**. Routines are plain markdown files in your Obsidian vault. Claude reads them at runtime — no redeploy needed.
+
+---
+
+## Architecture
 
 ```
-commands/       Slash commands (available via /command in Claude Code)
-routines/       Scheduled routines (editable prompts living in Obsidian)
+claude-automations/
+├── commands/           Slash commands → copy to .claude/commands/
+└── routines/           Routine prompts → copy to $VAULT_DIR/Queue/routines/
+
+$VAULT_DIR/
+├── Queue/
+│   ├── routines/       Source of truth for routine prompts (editable in Obsidian)
+│   └── .archive/       Completed one-shot tasks
+└── Generated/          Autonomous outputs, organized by routine
+    ├── ingest-reports/
+    ├── connections/
+    ├── daily-briefs/
+    ├── wiki-lint/
+    └── meta-coaching/
+
+~/.claude/scheduled-tasks/
+└── <routine>/
+    └── SKILL.md        Thin wrapper — reads $VAULT_DIR/Queue/routines/<routine>.md
 ```
+
+**Flow:**
+
+```
+Obsidian note (routine prompt)
+        ↓  reads at runtime
+~/.claude/scheduled-tasks (thin wrapper, cron trigger)
+        ↓  executes
+Claude Code agent
+        ↓  writes output
+$VAULT_DIR/Generated/<routine>/
+```
+
+---
 
 ## Commands
 
-| Command | Description |
+| Command | What it does |
 |---------|-------------|
 | `/article-report` | Analytical report of ingested articles (by period) |
-| `/process-queue` | Process one-shot tasks from Queue/ |
-| `/commit-standard` | Conventional Commits message generator |
-| `/create-crud` | Complete Java CRUD (DAO pattern) |
-| `/explain` | Explain code or concept for learners |
-| `/session-summary` | Structured session summary |
+| `/process-queue` | Process one-shot tasks from `Queue/` |
+| `/commit-standard` | Generate a Conventional Commits message |
+| `/create-crud` | Complete Java CRUD scaffold (DAO pattern) |
+| `/explain` | Explain code or concept adapted for learners |
+| `/session-summary` | Structured summary of current session |
 | `/code-review` | Code review of current file |
+
+---
 
 ## Routines
 
 | Routine | Schedule | Description |
 |---------|----------|-------------|
-| `weekly-ingest` | Friday 5 PM | Weekly ingest of articles + clippings (token-economic) |
-| `post-ingest-report` | Friday 7 PM | Cross-analysis report after ingest |
-| `weekly-meta-coaching` | Saturday 1 AM | Self-audit of Claude Code usage |
-| `weekly-wiki-lint` | Sunday 4 AM | Health check: orphans, dead links, dedup |
-| `connection-finder` | Sunday 6 AM | Non-obvious connections between sources |
-| `daily-brief` | Mon-Fri 11 PM | Nightly context: changes, connections, question |
-| `process-queue` | 8AM/12PM/4PM/8PM | Process one-shot tasks from Queue/ |
+| `weekly-ingest` | Fri 5 PM | Ingest articles + clippings — token-economic batch |
+| `post-ingest-report` | Fri 7 PM | Cross-analysis report after ingest |
+| `weekly-meta-coaching` | Sat 1 AM | Self-audit of Claude Code usage patterns |
+| `weekly-wiki-lint` | Sun 4 AM | Health check: orphans, dead links, duplicates |
+| `connection-finder` | Sun 6 AM | Surface non-obvious links between sources |
+| `daily-brief` | Mon–Fri 11 PM | Nightly context digest: changes, connections, open question |
+| `process-queue` | 8AM / 12PM / 4PM / 8PM | Drain async task queue |
 
-## How to use
+### Weekly schedule
 
-### Commands
-Copy to your project's `.claude/commands/`:
+```
+Mon  Tue  Wed  Thu  Fri  Sat  Sun
+ ▪    ▪    ▪    ▪    ▪    ▫    ▫   daily-brief (11 PM)
+                      ▪              weekly-ingest (5 PM)
+                      ▪              post-ingest-report (7 PM)
+                           ▪         weekly-meta-coaching (1 AM)
+                                ▪    weekly-wiki-lint (4 AM)
+                                ▪    connection-finder (6 AM)
+ ▪    ▪    ▪    ▪    ▪    ▪    ▪   process-queue (×4/day)
+```
+
+---
+
+## Quick start
+
+### 1. Copy commands
+
 ```bash
 cp commands/*.md /path/to/project/.claude/commands/
 ```
 
-### Routines
-Copy to your Obsidian vault's `Queue/routines/`:
+Use in Claude Code: `/article-report`, `/commit-standard`, etc.
+
+### 2. Copy routines
+
 ```bash
 cp routines/*.md $VAULT_DIR/Queue/routines/
 ```
 
-Each routine is referenced by a scheduled task (thin wrapper) in `~/.claude/scheduled-tasks/`. The wrapper just reads the routine file and executes — edit the routine in Obsidian, next run picks up changes automatically.
+### 3. Register scheduled tasks
 
-## Architecture
+For each routine, create a thin wrapper in `~/.claude/scheduled-tasks/<name>/SKILL.md`:
 
-```
-$VAULT_DIR/
-├── ingest/              Raw sources (articles + clippings)
-│   ├── articles/
-│   └── clippings/
-├── Queue/               Async human→agent interface
-│   ├── _template.md     Task template
-│   ├── .archive/        Completed tasks
-│   └── routines/        Recurring routine prompts (source of truth)
-├── Generated/           Autonomous outputs (organized by routine)
-│   ├── relatorios/
-│   ├── connections/
-│   ├── daily-briefs/
-│   ├── wiki-lint/
-│   ├── meta-coaching/
-│   └── ingest-reports/
-└── wiki/                Knowledge base
+```markdown
+---
+name: weekly-ingest
+schedule: "0 17 * * 5"
+---
+
+Read $VAULT_DIR/Queue/routines/weekly-ingest.md and execute it.
 ```
 
-## Principles
+That's it. Edit the routine in Obsidian — the next scheduled run picks up changes.
 
-- Prompts live in Obsidian, not in settings — editable like any note
-- Wikilinks integrate routines with vault (sources, concepts, entities)
-- Continuous improvement: edit prompt in Obsidian = next run picks up changes
-- Token economy: bash > AI, batch > loop, append > rewrite
+---
+
+## How it works
+
+**Thin harness pattern:** The scheduled task wrapper contains no prompt logic. It just reads the routine file from the vault and executes it. This means:
+
+- Prompts are version-controlled inside Obsidian (your vault, your git)
+- Wikilinks connect routines to vault concepts, sources, entities
+- Editing a prompt is just editing a note — no settings.json touch needed
+- Claude Code handles scheduling, tool execution, output writing
+
+**Token economy:** Routines are designed to minimize token use — bash over AI where possible, batch processing over per-item loops, append-only output files.
+
+---
+
+## Examples
+
+See [`examples/x-sources/`](examples/x-sources/) for sample ingested X (Twitter) threads in vault source format. Useful as templates for adding your own sources.
+
+---
+
+## Contributing
+
+Issues and PRs welcome. Keep prompts in English. Wikilinks must resolve in a standard Obsidian vault layout.
+
+## License
+
+MIT
